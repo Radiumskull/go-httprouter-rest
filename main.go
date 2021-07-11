@@ -29,7 +29,7 @@ func main() {
 	h := &BaseHandler{db: db}
 	h.AuthHandler(router)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8000", router))
 }
 
 func (h *BaseHandler) AuthHandler(router *httprouter.Router) {
