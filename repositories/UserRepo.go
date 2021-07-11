@@ -20,7 +20,7 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 // FindByID ..
 func (r *UserRepo) FindByID(ID int) (*models.User, error) {
 	var user models.User
-	err := r.db.QueryRow("select userid, username from users where userid = $1", ID).Scan(&user.Username)
+	err := r.db.QueryRow("select userid, username from users where userid = $1", ID).Scan(&user.Userid, &user.Username)
 	return &user, err
 }
 

@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"backend/controllers/auth"
+	"backend/controllers/user"
 
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq"
@@ -28,6 +29,7 @@ func main() {
 
 	h := &BaseHandler{db: db}
 	h.AuthHandler(router)
+	h.UserHandler(router)
 
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
@@ -39,4 +41,11 @@ func (h *BaseHandler) AuthHandler(router *httprouter.Router) {
 	}
 	router.POST("/auth/login", controller.Login)
 	router.POST("/auth/register", controller.Register)
+}
+
+func (h *BaseHandler) UserHandler(router *httprouter.Router) {
+	controller := user.UserController{
+		UserRepo: repositories.NewUserRepo(h.db),
+	}
+	router.GET("/user/:id", controller.GetUser)
 }

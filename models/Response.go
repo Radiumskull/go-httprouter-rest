@@ -8,7 +8,7 @@ import (
 type Response struct {
 	Message string
 	Err     error
-	Data    []byte
+	Data    interface{}
 }
 
 func (r *Response) HttpResponse(w http.ResponseWriter) {
