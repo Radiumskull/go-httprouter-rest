@@ -16,7 +16,7 @@ type AuthController struct {
 }
 
 func (h *AuthController) Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	h.UserRepo.Save(&models.User{Name: "Aritra"})
+	h.UserRepo.Save(&models.User{Username: "Aritra"})
 	fmt.Fprintf(w, "Logged In!/n")
 }
 

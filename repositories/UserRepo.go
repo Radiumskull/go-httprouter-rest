@@ -19,7 +19,9 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 
 // FindByID ..
 func (r *UserRepo) FindByID(ID int) (*models.User, error) {
-	return &models.User{Name: "Aritra"}, nil
+	var user models.User
+	err := r.db.QueryRow("select username from users where userid = $1", ID).Scan(&user.Username)
+	return &user, err
 }
 
 // Save ..

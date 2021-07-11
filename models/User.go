@@ -2,7 +2,9 @@ package models
 
 // User ..
 type User struct {
-	Name string
+	Userid   int
+	Username string
+	Hash     string
 }
 
 // UserRepository ..
