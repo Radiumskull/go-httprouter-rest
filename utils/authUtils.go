@@ -2,27 +2,22 @@ package utils
 
 import (
 	"backend/models"
-	"crypto/ed25519"
+	"time"
 
-	"github.com/pascaldekloe/jwt"
+	"github.com/dgrijalva/jwt-go"
 )
 
-func ParseJWT(token string) (*jwt.Claims, error) {
-	var JWTPrivateKey = "WeLoveGito"
-	claims, err := jwt.EdDSACheck([]byte(token), ed25519.PublicKey([]byte(JWTPrivateKey)))
-	return claims, err
-}
-
-func EncodeJWT(user *models.User) (string, error) {
-	var (
-		claims        jwt.Claims
-		JWTPrivateKey = "WeLoveGito"
-	)
-
-	claims.ID = string(rune(user.Userid))
-	claims.Subject = user.Username
-
-	token, err := claims.EdDSASign(ed25519.PrivateKey([]byte(JWTPrivateKey)))
-
-	return string(token), err
+func CreateToken(user *models.User) (string, error) {
+	var err error
+	//Creating Access Token
+	atClaims := jwt.MapClaims{}
+	atClaims["authorized"] = true
+	atClaims["username"] = user.Userid
+	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	token, err := at.SignedString([]byte("WeLoveGito"))
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }
