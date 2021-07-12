@@ -1,19 +1,39 @@
 package middlewares
 
 import (
-	"log"
+	"backend/repositories"
+	"backend/utils"
+	"errors"
 	"net/http"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/julienschmidt/httprouter"
 )
 
-func IsAuthenticated(h httprouter.Handle) httprouter.Handle {
+func IsAuthenticated(h httprouter.Handle, UserRepo *repositories.UserRepo) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		logger := log.Default()
-		token := r.Header.Get("Authorization")
+		tokenString := r.Header.Get("Authorization")
 
-		logger.Output(1, token)
+		token, err := utils.VerifyToken(tokenString)
+		if err != nil {
+			utils.ErrorResponse(w, errors.New("not authenticated"))
+			return
+		}
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			data := claims["data"].(map[string]interface{})
+			username := data["username"].(string)
 
-		h(w, r, ps)
+			// logger.Output(1, username)
+			_, DBErr := UserRepo.FindByUsername(username)
+			if DBErr != nil {
+				utils.ErrorResponse(w, errors.New("not authenticated"))
+				return
+			}
+
+			h(w, r, ps)
+
+		} else {
+			utils.ErrorResponse(w, errors.New("not authenticated"))
+		}
 	}
 }

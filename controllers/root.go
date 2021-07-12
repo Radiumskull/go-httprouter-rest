@@ -56,6 +56,6 @@ func (h *BaseHandler) UserHandler(router *httprouter.Router) {
 	}
 
 	for _, route := range routes {
-		router.Handle(route.Method, route.Path, middlewares.IsAuthenticated(route.Handler))
+		router.Handle(route.Method, route.Path, middlewares.IsAuthenticated(route.Handler, controller.UserRepo))
 	}
 }
